@@ -129,6 +129,21 @@
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="MAC"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/dialogMAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MAC"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btnEdit"
 
@@ -140,6 +155,12 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
+
+            <Button
+                android:id="@+id/btnLihatBT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lihat Data" />
 
 <!--            <Button-->
 <!--                android:id="@+id/btn_bluetooth"-->

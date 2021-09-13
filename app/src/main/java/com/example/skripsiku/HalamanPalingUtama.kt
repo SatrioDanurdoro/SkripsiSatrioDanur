@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.skripsiku.adapter.DaftarAdapter
 import com.example.skripsiku.adapter.OnItemClickListener
+import com.example.skripsiku.bluetooth.model.ModelBluetooth
 import com.example.skripsiku.database.DatabaseHelper
 import com.example.skripsiku.model.ModelMahasiswa
 
@@ -29,6 +30,8 @@ class HalamanPalingUtama : AppCompatActivity(), OnItemClickListener {
             startActivity(Intent(this, TambahDataMahasiswaActivity :: class.java))
         }
     }
+
+
 
     override fun onClick(data: ModelMahasiswa, position: Int) {
         TODO("Not yet implemented")

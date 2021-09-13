@@ -8,6 +8,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.skripsiku.adapter.DaftarAdapter
 import com.example.skripsiku.adapter.OnItemClickListener
+import com.example.skripsiku.bluetooth.model.ModelBluetooth
 import com.example.skripsiku.database.DatabaseHelper
 import com.example.skripsiku.model.ModelMahasiswa
 import kotlinx.android.synthetic.main.activity_daftar_mahasiswa.*

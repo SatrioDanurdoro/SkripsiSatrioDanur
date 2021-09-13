@@ -33,6 +33,7 @@
         <activity android:name=".DaftarMahasiswaActivity" />
         <activity android:name=".TambahDataMahasiswaActivity" />
         <activity android:name=".UpdateDataMahasiswaActivity" />
+<!--        <activity android:name=".DaftarBluetoothActivity"/>-->
     </application>
 
 </manifest>

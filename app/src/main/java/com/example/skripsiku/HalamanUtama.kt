@@ -15,7 +15,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import androidx.core.app.ActivityCompat
 //import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
@@ -36,11 +36,20 @@ import com.example.skripsiku.database.DatabaseHelperBT
 import com.example.skripsiku.model.ModelMahasiswa
 import kotlinx.android.synthetic.main.activity_halaman_utama.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_tambah_mahasiswa.*
 import kotlinx.android.synthetic.main.row_scan_result.*
 import org.jetbrains.anko.alert
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 
-
+// TOKEN GITHUB
+// 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
 
 
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
@@ -49,8 +58,16 @@ private const val LOCATION_PERMISSION_REQUEST_CODE = 2
 class HalamanUtama : AppCompatActivity() , OnItemClickListener {
     var dataMahasiswa = ModelMahasiswa()
     var dataDaftarMahasiswa: MutableList<ModelMahasiswa> = ArrayList()
+
+    var bt = ModelBluetooth()
+    var singledata : String?=""
+    var dataDaftarKoneksi : MutableList<ModelBluetooth> = ArrayList()
+
+
     private var positionStats = 1
     lateinit private var adapterDaftarMahasiswa: DaftarAdapter
+
+
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -109,10 +126,16 @@ class HalamanUtama : AppCompatActivity() , OnItemClickListener {
         dialogAlamat.text = dataMahasiswa.alamat
         dialogEmail.text = dataMahasiswa.email
         dialogTelepon.text = dataMahasiswa.telepon
+        dialogMAC.text = singledata
+
 
         btnEdit.setOnClickListener {
             dialogEditCallback(dataMahasiswa)
         }
+
+//        btnLihatBT.setOnClickListener {
+//            startActivity(Intent(this, DaftarBluetoothActivity::class.java))
+//        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -128,9 +151,15 @@ class HalamanUtama : AppCompatActivity() , OnItemClickListener {
             startBleScan()
         }
         setupRecyclerView()
+
+        deletedata()
+//        Log.i("Oncreate" , "Delete Data")
+
         Service.START_STICKY
 //
     }
+
+
 
 
     interface OnDialogItemClick {
@@ -159,9 +188,9 @@ class HalamanUtama : AppCompatActivity() , OnItemClickListener {
 //        DatabaseHelper.closeDatabase()
     }
 
-    override fun onClick(data: ModelMahasiswa, position: Int) {
-        TODO("Not yet implemented")
-    }
+//    override fun onClick(data: ModelBluetooth, position: Int) {
+//        TODO("Not yet implemented")
+//    }
 
 override fun onResume() {
     super.onResume()
@@ -269,37 +298,179 @@ private fun setupRecyclerView() {
     }
 }
 
-/*******************************************
+    private fun deletedata() {
+        var systemTime = System.currentTimeMillis()
+        val format = DateTimeFormatter.ofPattern("yyyy/MM/dd    HH:mm:ss:SSSS")
+        var timeNow = LocalDateTime.parse(formatTimestamp(systemTime), format)
+        dataDaftarKoneksi = DatabaseHelperBT.getAllData()
+        var timeUp : LocalDateTime? = null
+//        var selisih : Long = 0
+        var selisih by Delegates.notNull<Long>()
+        Log.i("Delete Data" , "delete data")
+
+        var counter = 0
+
+        for (i in dataDaftarKoneksi){
+            timeUp = DatabaseHelperBT.getDataTime(dataDaftarKoneksi[counter])
+            if (timeUp != null){
+                selisih = ChronoUnit.MINUTES.between(timeUp,timeNow)
+                Log.i("Time UP" , selisih.toString())
+
+                if(selisih > 2){
+                    DatabaseHelperBT.deleteData(dataDaftarKoneksi[counter].mac)
+                    Log.i("Data Delete" , dataDaftarKoneksi[counter].mac)
+                }
+            }
+
+
+
+            counter = counter+1
+        }
+
+    }
+
+//    private fun formatTimestamp(systemTime: Long): Any {
+//
+//    }
+
+    /*******************************************
  * Callback bodies
  *******************************************/
 
 private val scanCallback = object : ScanCallback() {
     override fun onScanResult(callbackType: Int, result: ScanResult) {
+
+//        Log.i("OnScanResult" , "Delete Data")
+        deletedata()
+        bt.mac = result.device.address
+
+        val systemTime = System.currentTimeMillis()
+        bt.time = formatTimestamp(systemTime)
+
+        if (result.device.name != null) {
+            bt.name = result.device.name
+        }else{
+            bt.name = "Nama Tidak Diketahui"
+        }
+
+
+
+//        DatabaseHelperBT.deleteData(bt)
+
+
+
         val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
         if (indexQuery != -1) { // A scan result already exists with the same address
             scanResults[indexQuery] = result
             scanResultAdapter.notifyItemChanged(indexQuery)
+//
+//            DatabaseHelperBT.deleteData(bt)
+
+//            bt.mac = result.device.address
+//
+//            val systemTime = System.currentTimeMillis()
+//            bt.time = formatTimestamp(systemTime)
+//
+//            if (result.device.name != null) {
+//                bt.name = result.device.name
+//            }else{
+//                bt.name = "Nama Tidak Diketahui"
+//            }
+//
+            DatabaseHelperBT.updateData(bt)
+
+//            val stat = DatabaseHelperBT.updateData(bt)
+//            if (stat>0) {
+//                val bind = Bundle()
+//                bind.putParcelable("DATA", bt)
+//
+//                val intent = Intent()
+//                intent.putExtras(bind)
+//
+//                setResult(Activity.RESULT_OK, intent)
+//            }
+
+
         } else {
             with(result.device) {
-                Timber.i("Found BLE device! Name: ${name ?: "Unnamed"}, address: $address")
+                Timber.i("Found BLE device! Name: ${name ?: "Nama TIdak Diketahui"}, address: $address")
             }
             scanResults.add(result)
             scanResultAdapter.notifyItemInserted(scanResults.size - 1)
-//
-            val bt = ModelBluetooth()
-            bt.mac = result.device.address
-//            bt.name = result.device.name
+            Log.i("getSingleData", DatabaseHelperBT.getSingleData(bt)+"            "+result.device.address)
+//Insert Data Scan ke database
+            if (DatabaseHelperBT.getSingleData(bt) != result.device.address){
 
-            DatabaseHelperBT.insertData(bt)
-//
 
+                singledata = "beda"
+
+//                    var bt = ModelBluetooth()
+//                    bt.mac = result.device.address
+//
+//                    val systemTime = System.currentTimeMillis()
+//                    bt.time = formatTimestamp(systemTime)
+//
+//                        if (result.device.name != null) {
+//                        bt.name = result.device.name
+//                    }else{
+//                        bt.name = "Nama Tidak Diketahui"
+//                    }
+
+//                DatabaseHelperBT.updateData(bt)
+//                DatabaseHelperBT.deleteData(bt)
+                DatabaseHelperBT.insertData(bt)
+
+
+//                val stat = DatabaseHelperBT.updateData(bt)
+//                if (stat>0){
+//                    val bind = Bundle()
+//                    bind.putParcelable("DATA", bt)
+//
+//                    val intent = Intent()
+//                    intent.putExtras(bind)
+//
+//                    setResult(Activity.RESULT_OK, intent)
+
+//                    Toast.makeText(this, "Berhasil Mengupdate Data", Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(this, "Gagal Mengudate Data", Toast.LENGTH_SHORT).show()
+//                }
+
+
+            }else{
+
+                singledata = "sama"
+
+//                val bt = ModelBluetooth()
+//                    bt.mac = result.device.address
+//
+//                val systemTime = System.currentTimeMillis()
+//                bt.time = formatTimestamp(systemTime)
+//
+//                        if (result.device.name != null) {
+//                        bt.name = result.device.name
+//                    }else{
+//                        bt.name = "Nama Tidak Diketahui"
+//                    }
+////                DatabaseHelperBT.deleteData(result.device.address)
+//                DatabaseHelperBT.deleteData(bt)
+//                DatabaseHelperBT.insertData(bt)
+                DatabaseHelperBT.updateData(bt)
+            }
         }
     }
+
+
 
     override fun onScanFailed(errorCode: Int) {
         Timber.e("onScanFailed: code $errorCode")
     }
 }
+
+    private fun formatTimestamp(time: Long): String {
+        val format = SimpleDateFormat("yyyy/MM/dd    HH:mm:ss:SSSS", Locale.ENGLISH)
+        return format.format(Date(time))
+    }
 
 private val connectionEventListener by lazy {
     ConnectionEventListener().apply {
@@ -334,5 +505,9 @@ private fun Context.hasPermission(permissionType: String): Boolean {
 private fun Activity.requestPermission(permission: String, requestCode: Int) {
     ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
 }
+
+    override fun onClick(data: ModelMahasiswa, position: Int) {
+        TODO("Not yet implemented")
+    }
 
 }
