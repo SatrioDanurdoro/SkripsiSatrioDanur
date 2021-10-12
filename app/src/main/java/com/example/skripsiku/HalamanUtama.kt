@@ -313,10 +313,10 @@ private fun setupRecyclerView() {
         for (i in dataDaftarKoneksi){
             timeUp = DatabaseHelperBT.getDataTime(dataDaftarKoneksi[counter])
             if (timeUp != null){
-                selisih = ChronoUnit.MINUTES.between(timeUp,timeNow)
+                selisih = ChronoUnit.DAYS.between(timeUp,timeNow)
                 Log.i("Time UP" , selisih.toString())
 
-                if(selisih > 2){
+                if(selisih > 1){
                     DatabaseHelperBT.deleteData(dataDaftarKoneksi[counter].mac)
                     Log.i("Data Delete" , dataDaftarKoneksi[counter].mac)
                 }
