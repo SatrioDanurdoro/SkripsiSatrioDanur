@@ -34,6 +34,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp">
 
+                <EditText
+                    android:id="@+id/etNamaEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nama"
+                    android:inputType="textNoSuggestions" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -49,12 +56,7 @@
                     android:hint="Nim"
                     android:inputType="number" />
 
-                <EditText
-                    android:id="@+id/etNamaEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nama"
-                    android:inputType="textNoSuggestions" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

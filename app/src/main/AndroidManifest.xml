@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.skripsiku">
 
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -20,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<!--        <activity android:name=".bluetooth.MainActivity"></activity>-->
+        <activity android:name=".DaftarBluetooth"></activity>
+        <!-- <activity android:name=".bluetooth.MainActivity"></activity> -->
         <activity android:name=".bluetooth.BleOperationsActivity" />
         <activity android:name=".HalamanPalingUtama">
             <intent-filter>
@@ -33,7 +33,6 @@
         <activity android:name=".DaftarMahasiswaActivity" />
         <activity android:name=".TambahDataMahasiswaActivity" />
         <activity android:name=".UpdateDataMahasiswaActivity" />
-<!--        <activity android:name=".DaftarBluetoothActivity"/>-->
     </application>
 
 </manifest>

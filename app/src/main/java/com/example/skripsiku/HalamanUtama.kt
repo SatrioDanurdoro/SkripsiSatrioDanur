@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_tambah_mahasiswa.*
 import kotlinx.android.synthetic.main.row_scan_result.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.appcompatV7.BuildConfig
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -133,9 +134,9 @@ class HalamanUtama : AppCompatActivity() , OnItemClickListener {
             dialogEditCallback(dataMahasiswa)
         }
 
-//        btnLihatBT.setOnClickListener {
-//            startActivity(Intent(this, DaftarBluetoothActivity::class.java))
-//        }
+        btnLihatBT.setOnClickListener {
+            startActivity(Intent(this, DaftarBluetooth::class.java))
+        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
